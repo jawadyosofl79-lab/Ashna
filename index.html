@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>حسابداری آشنا</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6f9;font-family:Tahoma,Arial;color:#222}
+header{background:#1769aa;color:white;padding:22px;text-align:center}
+h1{margin:0 0 6px;font-size:24px}.sub{font-size:13px}
+nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px;background:white;position:sticky;top:0}
+button{border:0;border-radius:10px;padding:12px;background:#1769aa;color:white;font-size:14px}
+nav button{background:#e8f1f8;color:#1769aa}.box{background:white;margin:12px;padding:16px;border-radius:14px;box-shadow:0 2px 8px #0001}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:#eef6fc;padding:14px;border-radius:12px;text-align:center}
+.big{font-size:22px;font-weight:bold;color:#1769aa}label{display:block;margin-top:10px;font-size:13px}
+input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:9px;margin-top:5px;font-size:14px}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
+td,th{border-bottom:1px solid #eee;padding:9px;text-align:right}
+th{background:#eef6fc}.hide{display:none}.danger{background:#c62828}
+.success{background:#2e7d32}.total{font-size:18px;font-weight:bold;margin-top:12px}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🏢 شرکت تولیدی UPVC آشنا</h1>
+<div class="sub">سیستم حسابداری و مدیریت شرکا</div>
+</header>
+
+<nav>
+<button onclick="show('home')">🏠 اصلی</button>
+<button onclick="show('projects')">📋 پروژه‌ها</button>
+<button onclick="show('money')">💰 دریافت/هزینه</button>
+<button onclick="show('partners')">👥 شرکا</button>
+<button onclick="show('report')">📊 گزارش</button>
+<button onclick="clearAll()">🗑 پاک‌کردن</button>
+</nav>
+
+<section id="home" class="page">
+<div class="box">
+<h2>داشبورد</h2>
+<div class="grid">
+<div class="card">پروژه‌ها<div class="big" id="pcount">0</div></div>
+<div class="card">تحویل‌شده<div class="big" id="done">0</div></div>
+<div class="card">سود قابل تقسیم<div class="big" id="profit">0</div></div>
+<div class="card">موجودی صندوق<div class="big" id="cash">0</div></div>
+</div>
+</div>
+<div class="box">
+<h3>سهم شرکا</h3>
+<div>👤 شریک اول: <b>35٪</b></div>
+<div>👤 شریک دوم: <b>35٪</b></div>
+<div>👤 شریک سوم: <b>15٪</b></div>
+<div>👤 شریک چهارم: <b>15٪</b></div>
+</div>
+</section>
+
+<section id="projects" class="page hide">
+<div class="box">
+<h2>➕ ثبت پروژه</h2>
+<label>نام مشتری</label><input id="customer">
+<label>مبلغ قرارداد</label><input id="contract" type="number">
+<label>وضعیت</label>
+<select id="status"><option>در حال اجرا</option><option>تحویل‌شده</option></select>
+<label>هزینه پروفیل</label><input id="profile" type="number" value="0">
+<label>هزینه شیشه</label><input id="glass" type="number" value="0">
+<label>هزینه یراق</label><input id="hardware" type="number" value="0">
+<label>هزینه روزمزد</label><input id="worker" type="number" value="0">
+<label>حمل و سایر هزینه‌ها</label><input id="other" type="number" value="0">
+<br><br>
+<button class="success" onclick="addProject()">ثبت پروژه</button>
+</div>
+<div class="box">
+<h3>پروژه‌های ثبت‌شده</h3>
+<table><thead><tr><th>مشتری</th><th>قرارداد</th><th>هزینه</th><th>سود</th><th>وضعیت</th></tr></thead>
+<tbody id="projectList"></tbody></table>
+</div>
+</section>
+
+<section id="money" class="page hide">
+<div class="box">
+<h2>💵 دریافت مشتری</h2>
+<label>مبلغ دریافت</label><input id="income" type="number">
+<br><button class="success" onclick="addIncome()">ثبت دریافت</button>
+</div>
+<div class="box">
+<h2>💸 هزینه کارگاه</h2>
+<label>شرح هزینه</label><input id="expenseName">
+<label>مبلغ</label><input id="expense" type="number">
+<br><button class="danger" onclick="addExpense()">ثبت هزینه</button>
+</div>
+<div class="box"><h3>موجودی صندوق</h3><div class="big" id="cash2">0 افغانی</div></div>
+</section>
+
+<section id="partners" class="page hide">
+<div class="box">
+<h2>👥 حساب شرکا</h2>
+<table>
+<thead><tr><th>شریک</th><th>سهم</th><th>سود</th><th>برداشت</th><th>مانده</th></tr></thead>
+<tbody id="partnerList"></tbody>
+</table>
+</div>
+<div class="box">
+<h3>➖ ثبت برداشت</h3>
+<label>شریک</label>
+<select id="partner"><option value="0">شریک اول 35٪</option><option value="1">شریک دوم 35٪</option><option value="2">شریک سوم 15٪</option><option value="3">شریک چهارم 15٪</option></select>
+<label>مبلغ برداشت</label><input id="withdraw" type="number">
+<br><button onclick="addWithdraw()">ثبت برداشت</button>
+</div>
+</section>
+
+<section id="report" class="page hide">
+<div class="box">
+<h2>📊 گزارش مالی</h2>
+<p>سود فقط از پروژه‌های <b>تحویل‌شده</b> محاسبه می‌شود.</p>
+<div class="total">سود قابل تقسیم: <span id="rprofit">0</span> افغانی</div>
+<table>
+<tr><th>شریک</th><th>درصد</th><th>سهم سود</th></tr>
+<tr><td>شریک اول</td><td>35٪</td><td id="r0">0</td></tr>
+<tr><td>شریک دوم</td><td>35٪</td><td id="r1">0</td></tr>
+<tr><td>شریک سوم</td><td>15٪</td><td id="r2">0</td></tr>
+<tr><td>شریک چهارم</td><td>15٪</td><td id="r3">0</td></tr>
+</table>
+</div>
+</section>
+
+<script>
+let data=JSON.parse(localStorage.getItem("ashnaData")||'{"projects":[],"income":0,"expense":0,"withdraw":[0,0,0,0]}');
+const shares=[.35,.35,.15,.15];
+
+function save(){localStorage.setItem("ashnaData",JSON.stringify(data));update()}
+function show(id){document.querySelectorAll(".page").forEach(x=>x.classList.add("hide"));document.getElementById(id).classList.remove("hide");update()}
+
+function n(id){return Number(document.getElementById(id).value)||0}
+
+function addProject(){
+ let cost=n("profile")+n("glass")+n("hardware")+n("worker")+n("other");
+ data.projects.push({customer:document.getElementById("customer").value||"بدون نام",contract:n("contract"),cost:cost,status:document.getElementById("status").value});
+ ["customer","contract","profile","glass","hardware","worker","other"].forEach(id=>document.getElementById(id).value=id=="status"?"":0);
+ save();show("projects");
+}
+
+function addIncome(){data.income+=n("income");document.getElementById("income").value="";save()}
+function addExpense(){data.expense+=n("expense");document.getElementById("expense").value="";save()}
+function addWithdraw(){let i=Number(document.getElementById("partner").value),v=n("withdraw");data.withdraw[i]+=v;save()}
+
+function profit(){
+ return data.projects.filter(p=>p.status==="تحویل‌شده").reduce((a,p)=>a+(p.contract-p.cost),0);
+}
+
+function update(){
+ let pr=profit();
+ document.getElementById("pcount").textContent=data.projects.length;
+ document.getElementById("done").textContent=data.projects.filter(p=>p.status==="تحویل‌شده").length;
+ document.getElementById("profit").textContent=pr.toLocaleString();
+ document.getElementById("rprofit").textContent=pr.toLocaleString();
+ let cash=data.income-data.expense-data.withdraw.reduce((a,b)=>a+b,0);
+ document.getElementById("cash").textContent=cash.toLocaleString();
+ document.getElementById("cash2").textContent=cash.toLocaleString()+" افغانی";
+
+ document.getElementById("projectList").innerHTML=data.projects.map(p=>
+ `<tr><td>${p.customer}</td><td>${p.contract.toLocaleString()}</td><td>${p.cost.toLocaleString()}</td><td>${p.status==="تحویل‌شده"?(p.contract-p.cost).toLocaleString():"—"}</td><td>${p.status}</td></tr>`).join("");
+
+ document.getElementById("partnerList").innerHTML=shares.map((s,i)=>{
+   let x=pr*s,remain=x-data.withdraw[i];
+   return `<tr><td>شریک ${i+1}</td><td>${s*100}%</td><td>${x.toLocaleString()}</td><td>${data.withdraw[i].toLocaleString()}</td><td>${remain.toLocaleString()}</td></tr>`;
+ }).join("");
+
+ shares.forEach((s,i)=>document.getElementById("r"+i).textContent=(pr*s).toLocaleString());
+}
+function clearAll(){if(confirm("همه اطلاعات پاک شود؟")){localStorage.removeItem("ashnaData");location.reload()}}
+update();
+</script>
+</body>
+  </html>
